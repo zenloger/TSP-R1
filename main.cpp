@@ -235,14 +235,14 @@ int main() {
 
         // Перебираем пути
         // На самом деле перебираем состояния TSP, который в свою очередь уже содержит путь
-        for (int subtree = 1; subtree < tree; subtree++) {
+        for (int subtree = (tree - 1) & tree; subtree > 0; subtree = (subtree - 1) & tree) {
             // Если поддерево не связное или есть вершина, которая находится на расстоянии 2 и более, то скип
             if (!IsSubGraphConnected(n, subtree)) continue;
             if ((ExtendSubraph(n, subtree) & tree) != tree) continue;
 
             for (int u = 0; u < n; u++) if (In(u, subtree)) {
                 if (tsp[subtree][u].r == INF) continue;
-                int cost = 3 * GetSize(tree ^ subtree) + 2 * tsp[subtree][u].r + 1;
+                int cost = 3 * tsp[subtree][u].r + 2 * GetSize(tree ^ subtree) + 1;
 
                 // Переходы
                 for (int v : neighbours[u]) if (In(v, tree) && !In(v, tsp[subtree][u].full_subset)) {
@@ -300,7 +300,7 @@ int main() {
 
         // Полный путь (тут одна вершина может быть несколько раз)
         vector<int> full_path(1, sparse_path[0]);
-        for (int i = 1; i < sparse_path.size(); i++) {
+        for (size_t i = 1; i < sparse_path.size(); i++) {
             int u = sparse_path[i-1];
             int v = sparse_path[i];
             while (u != v) {
@@ -329,7 +329,7 @@ int main() {
     }
 
     reverse(outputs.begin(), outputs.end());
-    for (int i = 0; i < outputs.size(); i++) {
+    for (size_t i = 0; i < outputs.size(); i++) {
         cout << "Round #" << i + 1 << endl;
         cout << outputs[i].str() << endl;
     }
